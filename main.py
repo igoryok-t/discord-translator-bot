@@ -23,7 +23,17 @@ translator = GoogleTranslator(source=SOURCE_LANG, target=TARGET_LANG)
 async def on_ready():
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
     print(f"Watching channel {SOURCE_CHANNEL_ID} -> posting to {TARGET_CHANNEL_ID}")
-
+    
+    # ДОБАВЬ ЭТО:
+    channel = bot.get_channel(SOURCE_CHANNEL_ID)
+    print(f"Channel object: {channel}")
+    if channel:
+        print(f"Channel name: {channel.name}, Guild: {channel.guild.name}")
+        perms = channel.permissions_for(channel.guild.me)
+        print(f"Bot perms in channel: view={perms.view_channel}, send={perms.send_messages}, embed={perms.embed_links}, history={perms.read_message_history}")
+    else:
+        print("CHANNEL NOT FOUND - bot cannot see it!")
+        
 @bot.event
 async def on_message(message: discord.Message):
     if message.author.bot:
