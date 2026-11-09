@@ -1,4 +1,5 @@
 import os
+import asyncio
 import discord
 from discord.ext import commands
 from deep_translator import GoogleTranslator
@@ -51,7 +52,18 @@ async def on_message(message: discord.Message):
         return
 
     try:
-        translated = translator.translate(text)
+        # retry с backoff для rate limit
+        translated = None
+        for attempt in range(3):
+            try:
+                translated = translator.translate(text)
+                break
+            except Exception as e:
+                if "too many requests" in str(e).lower() and attempt < 2:
+                    await asyncio.sleep(1.5 * (attempt + 1))
+                    continue
+                raise
+        
         if translated and translated != text:
             embed = discord.Embed(description=translated, color=0x00ff00)
             embed.set_author(
