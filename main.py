@@ -29,6 +29,7 @@ async def on_message(message: discord.Message):
     if message.author.bot:
         return
     if message.channel.id != SOURCE_CHANNEL_ID:
+        print(f"MSG from {message.author}: {message.content[:50]}")
         return
     if not message.content.strip():
         return
